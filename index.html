@@ -34,38 +34,45 @@
             </text>
           </svg>
         </button>
+        <div class="map_points"></div>
       </div>
 
       <div class="map__filters-container">
         <form action="#" class="map__filters" autocomplete="off">
-          <select name="housing-type" id="housing-type" class="map__filter">
+          <select name="type" id="type" class="map__filter">
             <option value="any" selected>Любой тип жилья</option>
             <option value="flat">Квартира</option>
             <option value="house">Дом</option>
-            <option value="bungalo">Сарай</option>
+            <option value="bungalo">Бунгало</option>
           </select>
 
-          <select name="housing-price" id="housing-price" class="map__filter">
+          <select name="price" id="price" class="map__filter">
             <option value="any" selected>Любая</option>
             <option value="middle">10000 - 50000&#x20bd;</option>
             <option value="low">до 10000&#x20bd;</option>
             <option value="high">от 50000&#x20bd;</option>
           </select>
 
-          <select name="housing-rooms" id="housing-rooms" class="map__filter">
+          <select name="rooms" id="rooms" class="map__filter">
             <option value="any" selected>Любое число комнат</option>
             <option value="1">Одна комната</option>
             <option value="2">Две комнаты</option>
             <option value="3">Три комнаты</option>
           </select>
 
-          <select name="housing-guests" id="housing-guests" class="map__filter">
+          <select name="guests" id="guests" class="map__filter">
             <option value="any" selected>Любое число гостей</option>
+            <option value="0">Ноль?</option>
             <option value="1">Один гость</option>
             <option value="2">Два гостя</option>
+            <option value="3">Три гостя</option>
+            <option value="4">Четыре гостя</option>
+            <option value="5">Пять гостей</option>
+            <option value="6">Шесть гостей</option>
+            <option value="93">93 гостя</option>
           </select>
 
-          <fieldset id="housing-features" class="map__filter-set features">
+          <fieldset id="features" class="map__filter-set features">
             <input type="checkbox" name="features" value="wifi" id="filter-wifi">
             <label class="feature feature--wifi" for="filter-wifi">Wi-Fi</label>
 
@@ -243,12 +250,6 @@
       <p class="popup__text--capacity">2 комнаты для 3 гостей</p>
       <p class="popup__text--time">Заезд после 14:00, выезд до 10:00</p>
       <ul class="popup__features">
-        <!-- <li class="feature feature--wifi"></li>
-        <li class="feature feature--dishwasher"></li>
-        <li class="feature feature--parking"></li>
-        <li class="feature feature--washer"></li>
-        <li class="feature feature--elevator"></li>
-        <li class="feature feature--conditioner"></li> -->
       </ul>
       <p class="popup__description">Великолепная квартира-студия в центре Токио. Подходит как туристам, так и
         бизнесменам. Квартира полностью
