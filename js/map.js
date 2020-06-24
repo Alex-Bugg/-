@@ -1,10 +1,16 @@
 'use strict';
 
 const HOUSE_TYPE = {
-  "house": "Дом",
-  "bungalo": "Бунгало",
-  "flat": "Квартира",
-  "palace": "Дворец"
+  house: "Дом",
+  bungalo: "Бунгало",
+  flat: "Квартира",
+  palace: "Дворец"
+};
+
+const HOUSE_PRICE = {
+  low: 10000,
+  middle: 50000,
+  high: Infinity
 };
 
 // =========filter===========
@@ -17,11 +23,11 @@ let mapPoints = document.querySelector('.map_points');
 const FILTER_ANY = "any";
 
 let filterItems = {
-  "type": FILTER_ANY,
-  "price": FILTER_ANY,
-  "rooms": FILTER_ANY,
-  "guests": FILTER_ANY,
-  "features": []
+  type: FILTER_ANY,
+  price: FILTER_ANY,
+  rooms: FILTER_ANY,
+  guests: FILTER_ANY,
+  features: []
 }
 
 mapFilter.forEach(function (selectItem) {
@@ -45,26 +51,31 @@ housingFeatures.forEach(function (checkBox) {
   })
 })
 
+// const priceFilterResult = points.filter(point => {
+//   const key = Object.keys(HOUSE_PRICE);
+//   const indexKey = key.indexOf(filter.price);
+//   const preIndexKey = key.indexOf(filter.price) - 1;
+//   if (!indexKey) return HOUSE_PRICE[filter.price] > point.offer.price;
+//   if (key[preIndexKey]) return HOUSE_PRICE[key[preIndexKey]] < point.offer.price && HOUSE_PRICE[key[indexKey]] > point.offer.price;
+// });
+
 let filterType = function (points, filter) {
   const result = [];
-  // console.log(filter)
+  const priceFilterResult = points.filter(point => {
+    const key = Object.keys(HOUSE_PRICE);
+    const indexKey = key.indexOf(filter.price);
+    const preIndexKey = key.indexOf(filter.price) - 1;
+    if (!indexKey) return HOUSE_PRICE[filter.price] > point.offer.price;
+    if (key[preIndexKey]) return HOUSE_PRICE[key[preIndexKey]] < point.offer.price && HOUSE_PRICE[key[indexKey]] > point.offer.price;
+  });
+  // debugger;
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
-    if (filter.type !== FILTER_ANY || point.offer.type !== filter.type) {
-      // debugger;
-      continue;
-    }
-    if (filter.rooms !== FILTER_ANY || point.offer.rooms !== filter.rooms) {
-      // debugger;
-      continue;
-    }
-    if (filter.guests !== FILTER_ANY || point.offer.guests !== filter.guests) {
-      // debugger;
-      continue;
-    }
+    if (filter.type !== FILTER_ANY && point.offer.type !== filter.type) continue;
+    if (filter.rooms !== FILTER_ANY && String(point.offer.rooms) !== filter.rooms) continue;
+    if (filter.guests !== FILTER_ANY && String(point.offer.guests) !== filter.guests) continue;
     result.push(point);
   }
-
   return result
 };
 
