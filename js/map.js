@@ -13,8 +13,9 @@ const HOUSE_PRICE = {
   high: Infinity
 };
 
-// =========filter===========
 const POINTS_DATA = [];
+
+// =========filter===========
 
 let formFilter = document.querySelector('.map__filters');
 let housingFeatures = formFilter.querySelectorAll('[name="features"]');
@@ -30,13 +31,19 @@ let filterItems = {
   features: []
 }
 
+const filterAccept = () => {
+  const filteredPoints = filterType(POINTS_DATA, filterItems);
+  mapPoints.innerHTML = '';
+  createPin(filteredPoints)
+}
+
 mapFilter.forEach(function (selectItem) {
   selectItem.addEventListener('change', (e) => {
     filterItems[e.target.name] = e.target.value;
-    const filteredPoints = filterType(POINTS_DATA, filterItems);
-    console.log(filteredPoints);
+    filterAccept()
   })
 })
+
 
 housingFeatures.forEach(function (checkBox) {
   checkBox.addEventListener('change', (e) => {
@@ -48,35 +55,27 @@ housingFeatures.forEach(function (checkBox) {
         filterItems[e.target.name].splice(indexSplice, 1)
       }
     }
+    filterAccept()
   })
 })
 
-// const priceFilterResult = points.filter(point => {
-//   const key = Object.keys(HOUSE_PRICE);
-//   const indexKey = key.indexOf(filter.price);
-//   const preIndexKey = key.indexOf(filter.price) - 1;
-//   if (!indexKey) return HOUSE_PRICE[filter.price] > point.offer.price;
-//   if (key[preIndexKey]) return HOUSE_PRICE[key[preIndexKey]] < point.offer.price && HOUSE_PRICE[key[indexKey]] > point.offer.price;
-// });
 
 let filterType = function (points, filter) {
-  const result = [];
-  const priceFilterResult = points.filter(point => {
-    const key = Object.keys(HOUSE_PRICE);
-    const indexKey = key.indexOf(filter.price);
-    const preIndexKey = key.indexOf(filter.price) - 1;
+  const key = Object.keys(HOUSE_PRICE);
+  const indexKey = key.indexOf(filter.price);
+  const preIndexKey = key.indexOf(filter.price) - 1;
+  return points.filter(point => {
+    if (filter.type !== FILTER_ANY && point.offer.type !== filter.type) return false;
+    if (filter.rooms !== FILTER_ANY && String(point.offer.rooms) !== filter.rooms) return false;
+    if (filter.guests !== FILTER_ANY && String(point.offer.guests) !== filter.guests) return false;
     if (!indexKey) return HOUSE_PRICE[filter.price] > point.offer.price;
-    if (key[preIndexKey]) return HOUSE_PRICE[key[preIndexKey]] < point.offer.price && HOUSE_PRICE[key[indexKey]] > point.offer.price;
-  });
-  // debugger;
-  for (let i = 0; i < points.length; i++) {
-    const point = points[i];
-    if (filter.type !== FILTER_ANY && point.offer.type !== filter.type) continue;
-    if (filter.rooms !== FILTER_ANY && String(point.offer.rooms) !== filter.rooms) continue;
-    if (filter.guests !== FILTER_ANY && String(point.offer.guests) !== filter.guests) continue;
-    result.push(point);
-  }
-  return result
+    if (key[preIndexKey]) return HOUSE_PRICE[key[preIndexKey]] <= point.offer.price && HOUSE_PRICE[key[indexKey]] >= point.offer.price;
+    for (let i = 0; i < filter.features.length; i++) {
+      const element = filter.features[i];
+      if (!point.offer.features.includes(element)) return false;
+    }
+    return true;
+  })
 };
 
 // ====active map=====
@@ -91,13 +90,16 @@ let crossClosePopUp = document.querySelector('.popup__close');
 let successHandler = function (points) {
   POINTS_DATA.push(...points)
   let activePage = function () {
-    createPin(points);
+    createPin(POINTS_DATA);
     map.classList.remove('map--faded');
     form.classList.remove('notice__form--disabled');
     this.removeEventListener('click', activePage)
   };
   mapPinMain.addEventListener('click', activePage);
 };
+
+let coordX;
+let coordY;
 
 mapPinMain.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
@@ -121,13 +123,16 @@ mapPinMain.addEventListener('mousedown', function (evt) {
 
     mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
     mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+    coordY = (mapPinMain.offsetTop - shift.y);
+    coordX = (mapPinMain.offsetLeft - shift.x);
   };
 
   let onMouseUp = function (upEvt) {
     upEvt.preventDefault();
-
     mapPins.removeEventListener('mousemove', onMouseMove);
     mapPins.removeEventListener('mouseup', onMouseUp);
+    // coordX = upEvt.clientX;
+    // coordY = upEvt.clientY;
   };
 
   mapPins.addEventListener('mousemove', onMouseMove)
@@ -149,7 +154,6 @@ let crossCloseCard = function () {
 };
 
 // =====create card and pins========
-
 let createCart = function (point) {
   let element = template.cloneNode(true);
   element.querySelector('.popup__avatar').src = point.author.avatar;
@@ -194,5 +198,97 @@ let createPin = function (points) {
     mapPoints.appendChild(elementPoint);
   }
 };
+
+// =========form=========
+const btnSubmitForm = document.querySelector('.form__submit');
+const avatarForm = form.querySelector('#avatar');
+const titleForm = form.querySelector('#title');
+const addressForm = form.querySelector('#address');
+const typeForm = form.querySelector('#type');
+const priceForm = form.querySelector('#price');
+const timeinForm = form.querySelector('#timein');
+const timeoutForm = form.querySelector('#timeout');
+const roomNumberForm = form.querySelector('#room_number');
+const capacityForm = form.querySelector('#capacity');
+const descriptionForm = form.querySelector('#description');
+const imagesForm = form.querySelector('#images');
+const checkboxForm = form.querySelectorAll('input[name="features"]')
+const previewImgPin = document.querySelector('.notice__preview img');
+const previewPhotoCard = document.querySelector('.photo_block');
+
+avatarForm.addEventListener('change', () => {
+  const FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
+  const file = avatarForm.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => {
+    return fileName.endsWith(it);
+  })
+  if (matches) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      previewImgPin.src = reader.result
+    })
+    reader.readAsDataURL(file);
+  }
+})
+
+// const prevPictuer = (img) => previewPhotoCard.appendChild(img);
+
+imagesForm.addEventListener('change', () => {
+  const FILE_TYPES = ['gif', 'jpeg', 'jpg', 'png'];
+  const file = imagesForm.files[0];
+  console.log(file)
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => {
+    return fileName.endsWith(it);
+  })
+  if (matches) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      const img = document.createElement('img');
+      img.classList.add('img_photo');
+      img.src = reader.result;
+      previewPhotoCard.appendChild(img);
+    })
+    reader.readAsDataURL(file);
+  }
+})
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newPin = {
+    author: {},
+    location: {},
+    offer: {
+      features: [],
+      photos: [],
+    }
+  };
+
+  if (avatarForm.value === '') newPin.author.avatar = "img/avatars/default.png"
+  else newPin.author.avatar = previewImgPin.src;
+  newPin.offer.title = titleForm.value;
+  newPin.offer.address = addressForm.value;
+  newPin.offer.type = typeForm.value;
+  newPin.offer.price = priceForm.value;
+  newPin.offer.checkin = timeinForm.value;
+  newPin.offer.checkout = timeoutForm.value;
+  newPin.offer.rooms = roomNumberForm.value;
+  newPin.offer.guests = capacityForm.value;
+  newPin.offer.description = descriptionForm.value;
+  checkboxForm.forEach(cb => {
+    if (cb.checked) newPin.offer.features.push(cb.value)
+  })
+  newPin.offer.photos = imagesForm.value;
+  newPin.location.x = coordX;
+  newPin.location.y = coordY;
+  POINTS_DATA.push(newPin)
+  createPin(POINTS_DATA)
+  mapPinMain.style.top = 375 + 'px';
+  mapPinMain.style.left = 600 + 'px';
+  form.reset();
+  previewImgPin.src = 'img/avatars/default.png';
+  previewPhotoCard.innerHTML = "";
+});
 
 window.load(successHandler);

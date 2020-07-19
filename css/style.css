@@ -251,8 +251,40 @@ textarea:focus {
 
   width: 65px;
   height: 65px;
+  z-index: 2;
 
   cursor: move;
+}
+
+.containter_photo {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.photo_input {
+  max-width: 125px;
+  margin: 0 5px 5px 0;
+  padding-top: 10px;
+  border: #ccc 1px dashed;
+  text-align: center;
+}
+
+.photo_input:hover {
+  color: #ff5635;
+  border: #ff5635 1px dashed;
+}
+
+.photo_input:active {
+  opacity: 0.7;
+}
+
+.containter_photo img {
+  width: 125px;
+  height: auto;
+}
+
+.img_photo {
+  margin: 0 5px 5px 0;
 }
 
 .map__pin--main img {
@@ -485,6 +517,10 @@ textarea:focus {
   opacity: 0.3;
 }
 
+#description {
+  resize: none;
+}
+
 .form__element {
   box-sizing: border-box;
 
@@ -497,10 +533,10 @@ textarea:focus {
 .notice__preview {
   background: #dadada;
   display: inline-block;
-  width: 70px;
+  min-width: 70px;
   text-align: center;
   line-height: 70px;
-  padding: 0 15px;
+  padding: 0;
   margin-right: 10px;
   border-radius: 5px;
 }

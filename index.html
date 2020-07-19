@@ -98,7 +98,7 @@
     <div class="notice">
       <h2 class="notice__title">Ваше объявление</h2>
 
-      <form class="notice__form notice__form--disabled" method="post" enctype="multipart/form-data" autocomplete="off">
+      <form class="notice__form notice__form--disabled" autocomplete="off">
         <fieldset class="notice__header">
           <legend>Ваша фотография (для карты)</legend>
           <div class="notice__photo">
@@ -117,17 +117,18 @@
 
         <fieldset class="form__element form__element--wide">
           <label for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио">
+          <input required id="title" name="title" type="text" minlength="15" maxlength="50"
+            placeholder="Милая, уютная квартирка в центре Токио">
         </fieldset>
 
         <fieldset class="form__element form__element--wide">
           <label for="address">Адрес</label>
-          <input id="address" name="address" type="text">
+          <input required id="address" name="address" type="text">
         </fieldset>
 
         <fieldset class="form__element">
           <label for="type">Тип жилья</label>
-          <select id="type" name="type">
+          <select required id="type" name="type">
             <option value="flat" selected>Квартира</option>
             <option value="bungalo">Лачуга</option>
             <option value="house">Дом</option>
@@ -137,7 +138,7 @@
 
         <fieldset class="form__element">
           <label for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" placeholder="5000">
+          <input required id="price" name="price" type="number" placeholder="5000" min"0">
         </fieldset>
 
         <fieldset class="form__element">
@@ -189,8 +190,8 @@
           <input type="checkbox" name="features" value="washer" id="feature-washer">
           <label class="feature feature--washer" for="feature-washer">Стиральная машина</label>
 
-          <input type="checkbox" name="features" value="elevator" id="feature-washer">
-          <label class="feature feature--elevator" for="feature-washer">Лифт</label>
+          <input type="checkbox" name="features" value="elevator" id="feature-elevator">
+          <label class="feature feature--elevator" for="feature-elevator">Лифт</label>
 
           <input type="checkbox" name="features" value="conditioner" id="feature-conditioner">
           <label class="feature feature--conditioner" for="feature-conditioner">Кондиционер</label>
@@ -204,11 +205,11 @@
 
         <fieldset class="form__element form__element--wide">
           <label>Фотографии жилья</label>
-          <div class="form__photo-container">
-            <div class="upload">
-              <input type="file" id="images">
-              <label for="images" class="drop-zone">Загрузите или&nbsp;перетащите сюда фото</label>
-            </div>
+          <div class="containter_photo">
+            <label class="photo_input">
+              <input type="file" id="images"> Загрузите или&nbsp;перетащите сюда фото
+            </label>
+            <div class="photo_block"></div>
           </div>
         </fieldset>
 
